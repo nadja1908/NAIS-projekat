@@ -74,15 +74,20 @@
 			<artifactId>spring-boot-starter-data-cassandra</artifactId>
 		</dependency>
 
-		<!-- Dependency za rad sa Redis bazom podataka !-->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-redis</artifactId>
-		</dependency>
+	<!-- Dependency za rad sa Redis bazom podataka !-->
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-data-redis</artifactId>
+	</dependency>
 
-	</dependencies>
+	<!-- PDF Generation dependencies -->
+	<dependency>
+		<groupId>com.itextpdf</groupId>
+		<artifactId>itextpdf</artifactId>
+		<version>5.5.13.3</version>
+	</dependency>
 
-	<build>
+</dependencies>	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

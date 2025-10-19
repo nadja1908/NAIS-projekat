@@ -101,39 +101,10 @@ public class MainController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // === SUBJECT ENDPOINTS ===
+  
     
-    @GetMapping("/subjects")
-    public ResponseEntity<List<SubjectDTO>> getAllSubjects() {
-        List<Subject> subjects = subjectService.getAllSubjects();
-        List<SubjectDTO> subjectDTOs = subjects.stream()
-                .map(this::convertSubjectToDTO)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(subjectDTOs);
-    }
+ 
 
-    @GetMapping("/subjects/department/{department}")
-    public ResponseEntity<List<SubjectDTO>> getSubjectsByDepartment(@PathVariable String department) {
-        List<Subject> subjects = subjectService.getSubjectsByDepartment(department);
-        List<SubjectDTO> subjectDTOs = subjects.stream()
-                .map(this::convertSubjectToDTO)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(subjectDTOs);
-    }
-
-    @PostMapping("/subjects")
-    public ResponseEntity<SubjectDTO> createSubject(@RequestBody SubjectDTO subjectDTO) {
-        Subject subject = convertDTOToSubject(subjectDTO);
-        Subject savedSubject = subjectService.saveSubject(subject);
-        return ResponseEntity.ok(convertSubjectToDTO(savedSubject));
-    }
-
-    @GetMapping("/subjects/{subjectId}")
-    public ResponseEntity<SubjectDTO> getSubjectById(@PathVariable String subjectId) {
-        return subjectService.getSubjectById(subjectId)
-                .map(subject -> ResponseEntity.ok(convertSubjectToDTO(subject)))
-                .orElse(ResponseEntity.notFound().build());
-    }
 
     // === ADVANCED ANALYTICS ===
     

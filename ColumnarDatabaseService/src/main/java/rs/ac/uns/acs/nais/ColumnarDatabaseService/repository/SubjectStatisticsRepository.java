@@ -61,4 +61,8 @@ public interface SubjectStatisticsRepository extends CassandraRepository<Subject
     // 10. Semestralne statistike
     @Query("SELECT * FROM subject_statistics WHERE department = ?0 AND semester = ?1 ALLOW FILTERING")
     List<SubjectStatistics> findSubjectsBySemester(String department, Integer semester);
+
+    // ADD: Method for Saga Orchestrator
+        @Query("SELECT * FROM subject_statistics WHERE subject_id = ?0 AND department = ?1 AND academic_year = ?2 ALLOW FILTERING")
+    List<SubjectStatistics> findBySubjectIdAndDepartmentAndYear(String subjectId, String department, String academicYear);
 }

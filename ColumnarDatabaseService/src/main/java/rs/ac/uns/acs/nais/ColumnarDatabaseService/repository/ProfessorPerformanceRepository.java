@@ -67,4 +67,8 @@ public interface ProfessorPerformanceRepository extends CassandraRepository<Prof
     // 12. Count profesora sa specifičnim kriterijumima
     @Query("SELECT COUNT(*) FROM professor_performance WHERE academic_year = ?0 AND overall_pass_rate > ?1")
     Long countSuccessfulProfessors(String academicYear, Double passRateThreshold);
+
+    // ADD: Method needed by ProfessorPerformanceService
+    @Query("SELECT * FROM professor_performance WHERE academic_year = ?0 ALLOW FILTERING")
+    List<ProfessorPerformance> findByAcademicYear(String academicYear);
 }

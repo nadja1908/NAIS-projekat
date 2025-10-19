@@ -13,8 +13,6 @@ public class Subject {
     @Column("subject_name")
     private String subjectName;
 
-    @Column("subject_code")
-    private String subjectCode;
 
     @Column("department")
     private String department;
@@ -40,12 +38,11 @@ public class Subject {
     // Constructors
     public Subject() {}
 
-    public Subject(String subjectId, String subjectName, String subjectCode, String department,
+    public Subject(String subjectId, String subjectName, String department,
                    Integer ectsPoints, Integer yearOfStudy, Integer semester, Long professorId, 
                    String professorName, Boolean isMandatory) {
         this.subjectId = subjectId;
         this.subjectName = subjectName;
-        this.subjectCode = subjectCode;
         this.department = department;
         this.ectsPoints = ectsPoints;
         this.yearOfStudy = yearOfStudy;
@@ -72,13 +69,6 @@ public class Subject {
         this.subjectName = subjectName;
     }
 
-    public String getSubjectCode() {
-        return subjectCode;
-    }
-
-    public void setSubjectCode(String subjectCode) {
-        this.subjectCode = subjectCode;
-    }
 
     public String getDepartment() {
         return department;

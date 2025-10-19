@@ -53,4 +53,20 @@ public class RedisConfig {
                 .entryTtl(duration)
                 .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
     }
+
+    // ADD: RedisTemplate bean that was missing
+    @Bean
+    public org.springframework.data.redis.core.RedisTemplate<String, Object> redisTemplate() {
+        org.springframework.data.redis.core.RedisTemplate<String, Object> template = new org.springframework.data.redis.core.RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory());
+        
+        // Serializers
+        template.setKeySerializer(new org.springframework.data.redis.serializer.StringRedisSerializer());
+        template.setHashKeySerializer(new org.springframework.data.redis.serializer.StringRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        
+        template.afterPropertiesSet();
+        return template;
+    }
 }

@@ -79,7 +79,7 @@ services:
       - "9050:9050"
 
   postgresdb:
-    image: postgres17
+    image: postgres:latest
     environment:
       POSTGRES_USER: "nais"
       POSTGRES_PASSWORD: "nais"

@@ -21,8 +21,6 @@ public class SubjectStatistics {
     @Column("subject_name")
     private String subjectName;
 
-    @Column("subject_code")
-    private String subjectCode;
 
     @Column("professor_id")
     private Long professorId;
@@ -108,13 +106,6 @@ public class SubjectStatistics {
         this.subjectName = subjectName;
     }
 
-    public String getSubjectCode() {
-        return subjectCode;
-    }
-
-    public void setSubjectCode(String subjectCode) {
-        this.subjectCode = subjectCode;
-    }
 
     public Long getProfessorId() {
         return professorId;

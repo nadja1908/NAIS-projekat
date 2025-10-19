@@ -15,6 +15,9 @@ public class SubjectStatisticsService {
 
     @Autowired
     private SubjectStatisticsRepository subjectStatisticsRepository;
+    
+    @Autowired
+    private rs.ac.uns.acs.nais.ColumnarDatabaseService.repository.StudentGradeRepository studentGradeRepository;
 
     // === OSNOVNI CRUD ===
     
@@ -319,5 +322,91 @@ public class SubjectStatisticsService {
         public Double getAverageGrade() { return averageGrade; }
         public Integer getTotalStudents() { return totalStudents; }
         public Integer getTotalSubjects() { return totalSubjects; }
+    }
+
+    // === NOVA METODA ZA SAGA ORCHESTRATOR ===
+    /**
+     * Update statistics after grade change for saga transaction
+     */
+    public void updateStatisticsAfterGrade(String subjectId, String department, String academicYear) {
+        // Recalculate statistics for the subject using stored student grades
+        List<rs.ac.uns.acs.nais.ColumnarDatabaseService.entity.StudentGrade> grades =
+            studentGradeRepository.findBySubjectIdAndYear(subjectId, academicYear);
+
+        int totalAttempts = (grades == null) ? 0 : grades.size();
+        int totalEnrolledStudents = 0;
+        int totalPassedStudents = 0;
+        int totalFailedStudents = 0;
+        double averageGrade = 0.0;
+        int grade6Count = 0, grade7Count = 0, grade8Count = 0, grade9Count = 0, grade10Count = 0;
+
+        if (grades != null && !grades.isEmpty()) {
+            totalEnrolledStudents = (int) grades.stream()
+                    .map(g -> g.getStudentId())
+                    .distinct()
+                    .count();
+
+            totalPassedStudents = (int) grades.stream()
+                    .filter(g -> g.getGrade() != null && g.getGrade() >= 6.0)
+                    .count();
+
+            totalFailedStudents = (int) grades.stream()
+                    .filter(g -> g.getGrade() != null && g.getGrade() < 6.0)
+                    .count();
+
+            averageGrade = grades.stream()
+                    .filter(g -> g.getGrade() != null)
+                    .mapToDouble(g -> g.getGrade())
+                    .average()
+                    .orElse(0.0);
+
+            grade6Count = (int) grades.stream().filter(g -> g.getGrade() != null && g.getGrade() == 6.0).count();
+            grade7Count = (int) grades.stream().filter(g -> g.getGrade() != null && g.getGrade() == 7.0).count();
+            grade8Count = (int) grades.stream().filter(g -> g.getGrade() != null && g.getGrade() == 8.0).count();
+            grade9Count = (int) grades.stream().filter(g -> g.getGrade() != null && g.getGrade() == 9.0).count();
+            grade10Count = (int) grades.stream().filter(g -> g.getGrade() != null && g.getGrade() == 10.0).count();
+        }
+
+        double passRatePercentage = (totalAttempts == 0) ? 0.0 : ((double) totalPassedStudents / (double) totalAttempts) * 100.0;
+
+        List<SubjectStatistics> existingStats = subjectStatisticsRepository.findBySubjectIdAndDepartmentAndYear(
+            subjectId, department, academicYear);
+
+        SubjectStatistics stats;
+        if (existingStats != null && !existingStats.isEmpty()) {
+            stats = existingStats.get(0);
+        } else {
+            stats = new SubjectStatistics();
+            stats.setSubjectId(subjectId);
+            stats.setDepartment(department);
+            stats.setAcademicYear(academicYear);
+        }
+
+        stats.setTotalAttempts(totalAttempts);
+        stats.setTotalEnrolledStudents(totalEnrolledStudents);
+        stats.setTotalPassedStudents(totalPassedStudents);
+        stats.setTotalFailedStudents(totalFailedStudents);
+        stats.setAverageGrade(averageGrade);
+        stats.setPassRatePercentage(passRatePercentage);
+        stats.setGrade6Count(grade6Count);
+        stats.setGrade7Count(grade7Count);
+        stats.setGrade8Count(grade8Count);
+        stats.setGrade9Count(grade9Count);
+        stats.setGrade10Count(grade10Count);
+
+        subjectStatisticsRepository.save(stats);
+    }
+
+    /**
+     * Return the statistics entry for a given subject/department/year or null if none exists.
+     */
+    public SubjectStatistics getStatistics(String subjectId, String department, String academicYear) {
+        List<SubjectStatistics> existingStats = subjectStatisticsRepository.findBySubjectIdAndDepartmentAndYear(
+            subjectId, department, academicYear);
+
+        if (existingStats != null && !existingStats.isEmpty()) {
+            return existingStats.get(0);
+        }
+        return null;
     }
 }

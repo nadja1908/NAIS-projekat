@@ -21,7 +21,6 @@ CREATE TABLE IF NOT EXISTS students (
 CREATE TABLE IF NOT EXISTS subjects (
     subject_id text PRIMARY KEY,
     subject_name text,
-    subject_code text,
     department text,
     ects_points int,
     year_of_study int,
@@ -42,11 +41,12 @@ CREATE TABLE IF NOT EXISTS student_grades (
     passed boolean,
     attempt_number int,
     subject_name text,
-    subject_code text,
     department text,
     professor_id bigint,
     professor_name text,
     ects_points int,
+    semester int,
+    year_of_study int,
     PRIMARY KEY (student_id, academic_year, subject_id, exam_date)
 );
 
@@ -55,12 +55,23 @@ CREATE TABLE IF NOT EXISTS subject_statistics (
     department text,
     academic_year text,
     subject_id text,
-    pass_rate_percentage double,
     average_grade double,
-    total_enrolled_students int,
-    year_of_study int,
-    semester int,
+    ects_points int,
+    grade_10_count int,
+    grade_6_count int,
+    grade_7_count int,
+    grade_8_count int,
+    grade_9_count int,
+    pass_rate_percentage double,
     professor_id bigint,
+    professor_name text,
+    semester int,
+    subject_name text,
+    total_attempts int,
+    total_enrolled_students int,
+    total_failed_students int,
+    total_passed_students int,
+    year_of_study int,
     PRIMARY KEY (department, academic_year, subject_id)
 );
 
@@ -96,43 +107,59 @@ INSERT INTO students (student_id, first_name, last_name, index_number, study_pro
 VALUES (3, 'Petar', 'Nikolic', 'SW-3-2021', 'Softversko inženjerstvo', 3, 2021, '2021-09-01', true);
 
 -- Test predmeti
-INSERT INTO subjects (subject_id, subject_name, subject_code, department, ects_points, year_of_study, semester, professor_id, professor_name, is_mandatory) 
-VALUES ('NAIS', 'Napredni algoritmi i strukture podataka', 'NAIS', 'FTN', 6, 3, 5, 101, 'Prof. Dr Petar Petrovic', true);
+INSERT INTO subjects (subject_id, subject_name, department, ects_points, year_of_study, semester, professor_id, professor_name, is_mandatory) 
+VALUES ('NAIS', 'Napredni algoritmi i strukture podataka', 'FTN', 6, 3, 5, 101, 'Prof. Dr Petar Petrovic', true);
 
-INSERT INTO subjects (subject_id, subject_name, subject_code, department, ects_points, year_of_study, semester, professor_id, professor_name, is_mandatory) 
-VALUES ('OOP', 'Objektno orijentisano programiranje', 'OOP', 'FTN', 8, 2, 3, 102, 'Prof. Dr Marko Markovic', true);
+INSERT INTO subjects (subject_id, subject_name, department, ects_points, year_of_study, semester, professor_id, professor_name, is_mandatory) 
+VALUES ('OOP', 'Objektno orijentisano programiranje', 'FTN', 8, 2, 3, 102, 'Prof. Dr Marko Markovic', true);
 
-INSERT INTO subjects (subject_id, subject_name, subject_code, department, ects_points, year_of_study, semester, professor_id, professor_name, is_mandatory) 
-VALUES ('WEB', 'Web programiranje', 'WEB', 'FTN', 6, 3, 6, 103, 'Doc. Dr Ana Antic', false);
+INSERT INTO subjects (subject_id, subject_name, department, ects_points, year_of_study, semester, professor_id, professor_name, is_mandatory) 
+VALUES ('WEB', 'Web programiranje', 'FTN', 6, 3, 6, 103, 'Doc. Dr Ana Antic', false);
 
 -- Test ocene
-INSERT INTO student_grades (student_id, academic_year, subject_id, exam_date, grade, exam_type, passed, attempt_number, subject_name, department, professor_id) 
-VALUES (1, '2024/2025', 'NAIS', '2024-06-15 10:00:00', 8.5, 'REDOVAN', true, 1, 'Napredni algoritmi i strukture podataka', 'FTN', 101);
-
-INSERT INTO student_grades (student_id, academic_year, subject_id, exam_date, grade, exam_type, passed, attempt_number, subject_name, department, professor_id) 
-VALUES (2, '2024/2025', 'NAIS', '2024-06-15 10:00:00', 9.0, 'REDOVAN', true, 1, 'Napredni algoritmi i strukture podataka', 'FTN', 101);
-
-INSERT INTO student_grades (student_id, academic_year, subject_id, exam_date, grade, exam_type, passed, attempt_number, subject_name, department, professor_id) 
-VALUES (3, '2024/2025', 'NAIS', '2024-06-15 10:00:00', 7.5, 'REDOVAN', true, 1, 'Napredni algoritmi i strukture podataka', 'FTN', 101);
-
-INSERT INTO student_grades (student_id, academic_year, subject_id, exam_date, grade, exam_type, passed, attempt_number, subject_name, department, professor_id) 
-VALUES (1, '2024/2025', 'OOP', '2024-01-20 14:00:00', 9.5, 'REDOVAN', true, 1, 'Objektno orijentisano programiranje', 'FTN', 102);
-
-INSERT INTO student_grades (student_id, academic_year, subject_id, exam_date, grade, exam_type, passed, attempt_number, subject_name, department, professor_id) 
-VALUES (2, '2024/2025', 'OOP', '2024-01-20 14:00:00', 8.0, 'REDOVAN', true, 1, 'Objektno orijentisano programiranje', 'FTN', 102);
-
-INSERT INTO student_grades (student_id, academic_year, subject_id, exam_date, grade, exam_type, passed, attempt_number, subject_name, department, professor_id) 
-VALUES (3, '2024/2025', 'WEB', '2024-09-05 16:00:00', 6.0, 'REDOVAN', true, 1, 'Web programiranje', 'FTN', 103);
+INSERT INTO student_grades (student_id, academic_year, subject_id, exam_date, grade, exam_type, passed, attempt_number, subject_name, department, professor_id, professor_name, ects_points) VALUES (1, '2024/2025', 'NAIS', '2024-06-15 10:00:00', 8.5, 'REDOVAN', true, 1, 'Napredni algoritmi i strukture podataka', 'FTN', 101, 'Prof. Dr Petar Petrovic', 6);
+INSERT INTO student_grades (student_id, academic_year, subject_id, exam_date, grade, exam_type, passed, attempt_number, subject_name, department, professor_id, professor_name, ects_points) VALUES (2, '2024/2025', 'NAIS', '2024-06-15 10:00:00', 9.0, 'REDOVAN', true, 1, 'Napredni algoritmi i strukture podataka', 'FTN', 101, 'Prof. Dr Petar Petrovic', 6);
+INSERT INTO student_grades (student_id, academic_year, subject_id, exam_date, grade, exam_type, passed, attempt_number, subject_name, department, professor_id, professor_name, ects_points) VALUES (3, '2024/2025', 'NAIS', '2024-06-15 10:00:00', 7.5, 'REDOVAN', true, 1, 'Napredni algoritmi i strukture podataka', 'FTN', 101, 'Prof. Dr Petar Petrovic', 6);
+INSERT INTO student_grades (student_id, academic_year, subject_id, exam_date, grade, exam_type, passed, attempt_number, subject_name, department, professor_id, professor_name, ects_points) VALUES (1, '2024/2025', 'OOP', '2024-01-20 14:00:00', 9.5, 'REDOVAN', true, 1, 'Objektno orijentisano programiranje', 'FTN', 102, 'Prof. Dr Marko Markovic', 8);
+INSERT INTO student_grades (student_id, academic_year, subject_id, exam_date, grade, exam_type, passed, attempt_number, subject_name, department, professor_id, professor_name, ects_points) VALUES (2, '2024/2025', 'OOP', '2024-01-20 14:00:00', 8.0, 'REDOVAN', true, 1, 'Objektno orijentisano programiranje', 'FTN', 102, 'Prof. Dr Marko Markovic', 8);
+INSERT INTO student_grades (student_id, academic_year, subject_id, exam_date, grade, exam_type, passed, attempt_number, subject_name, department, professor_id, professor_name, ects_points) VALUES (3, '2024/2025', 'WEB', '2024-09-05 16:00:00', 6.0, 'REDOVAN', true, 1, 'Web programiranje', 'FTN', 103, 'Doc. Dr Ana Antic', 6);
 
 -- Test statistike predmeta
-INSERT INTO subject_statistics (department, academic_year, subject_id, pass_rate_percentage, average_grade, total_enrolled_students, year_of_study, semester, professor_id)
-VALUES ('FTN', '2024/2025', 'NAIS', 95.5, 8.33, 120, 3, 5, 101);
+INSERT INTO subject_statistics (
+    department, academic_year, subject_id, average_grade, ects_points,
+    grade_10_count, grade_6_count, grade_7_count, grade_8_count, grade_9_count,
+    pass_rate_percentage, professor_id, professor_name, semester, subject_name,
+    total_attempts, total_enrolled_students, total_failed_students, total_passed_students, year_of_study
+) VALUES (
+    'FTN', '2024/2025', 'NAIS', 8.33, 6,
+    30, 5, 10, 20, 15,
+    95.5, 101, 'Prof. Dr Petar Petrovic', 5, 'Napredni algoritmi i strukture podataka',
+    120, 120, 5, 115, 3
+);
 
-INSERT INTO subject_statistics (department, academic_year, subject_id, pass_rate_percentage, average_grade, total_enrolled_students, year_of_study, semester, professor_id)
-VALUES ('FTN', '2024/2025', 'OOP', 87.2, 7.85, 150, 2, 3, 102);
+INSERT INTO subject_statistics (
+    department, academic_year, subject_id, average_grade, ects_points,
+    grade_10_count, grade_6_count, grade_7_count, grade_8_count, grade_9_count,
+    pass_rate_percentage, professor_id, professor_name, semester, subject_name,
+    total_attempts, total_enrolled_students, total_failed_students, total_passed_students, year_of_study
+) VALUES (
+    'FTN', '2024/2025', 'OOP', 7.85, 8,
+    40, 10, 20, 30, 25,
+    87.2, 102, 'Prof. Dr Marko Markovic', 3, 'Objektno orijentisano programiranje',
+    150, 150, 20, 130, 2
+);
 
-INSERT INTO subject_statistics (department, academic_year, subject_id, pass_rate_percentage, average_grade, total_enrolled_students, year_of_study, semester, professor_id)
-VALUES ('FTN', '2024/2025', 'WEB', 78.5, 7.12, 80, 3, 6, 103);
+INSERT INTO subject_statistics (
+    department, academic_year, subject_id, average_grade, ects_points,
+    grade_10_count, grade_6_count, grade_7_count, grade_8_count, grade_9_count,
+    pass_rate_percentage, professor_id, professor_name, semester, subject_name,
+    total_attempts, total_enrolled_students, total_failed_students, total_passed_students, year_of_study
+) VALUES (
+    'FTN', '2024/2025', 'WEB', 7.12, 6,
+    10, 15, 20, 25, 10,
+    78.5, 103, 'Doc. Dr Ana Antic', 6, 'Web programiranje',
+    80, 80, 15, 65, 3
+);
 
 -- Test performanse profesora
 INSERT INTO professor_performance (professor_id, academic_year, total_students_taught, total_subjects_taught, total_students_passed, total_students_failed, overall_pass_rate, average_grade_given, total_exams_conducted, hardest_subject_id, hardest_subject_name, hardest_subject_pass_rate, easiest_subject_id, easiest_subject_name, easiest_subject_pass_rate, performance_consistency_score)

@@ -38,8 +38,6 @@ public class StudentGrade {
     @Column("subject_name")
     private String subjectName;
 
-    @Column("subject_code")
-    private String subjectCode;
 
     @Column("department")
     private String department;
@@ -135,13 +133,6 @@ public class StudentGrade {
         this.subjectName = subjectName;
     }
 
-    public String getSubjectCode() {
-        return subjectCode;
-    }
-
-    public void setSubjectCode(String subjectCode) {
-        this.subjectCode = subjectCode;
-    }
 
     public String getDepartment() {
         return department;
