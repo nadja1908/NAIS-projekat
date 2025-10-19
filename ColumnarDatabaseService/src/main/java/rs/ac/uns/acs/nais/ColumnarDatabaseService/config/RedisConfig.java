@@ -10,6 +10,9 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair;
 
 @Configuration
@@ -61,10 +64,17 @@ public class RedisConfig {
         template.setConnectionFactory(redisConnectionFactory());
         
         // Serializers
-        template.setKeySerializer(new org.springframework.data.redis.serializer.StringRedisSerializer());
-        template.setHashKeySerializer(new org.springframework.data.redis.serializer.StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+            // Configure ObjectMapper with JavaTimeModule to handle Java 8 date/time types
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            // Optional: configure to write dates as ISO strings
+            mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+            GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(mapper);
+            template.setKeySerializer(new org.springframework.data.redis.serializer.StringRedisSerializer());
+            template.setValueSerializer(serializer);
+            template.setHashKeySerializer(new org.springframework.data.redis.serializer.StringRedisSerializer());
+            template.setHashValueSerializer(serializer);
         
         template.afterPropertiesSet();
         return template;
