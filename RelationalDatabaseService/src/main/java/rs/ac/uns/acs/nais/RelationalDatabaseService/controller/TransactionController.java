@@ -8,6 +8,7 @@ import rs.ac.uns.acs.nais.RelationalDatabaseService.model.Subject;
 import rs.ac.uns.acs.nais.RelationalDatabaseService.service.GradeSagaService;
 
 import java.util.Map;
+import rs.ac.uns.acs.nais.RelationalDatabaseService.dto.TransactionalGradeRequest;
 
 @RestController
 @RequestMapping("/api/v1/transactional")
@@ -25,11 +26,11 @@ public class TransactionController {
      * }
      */
     @PostMapping("/grade")
-    public ResponseEntity<?> createTransactionalGrade(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> createTransactionalGrade(@RequestBody TransactionalGradeRequest request) {
         try {
-            Map<String, Object> studentMap = (Map<String, Object>) payload.get("student");
-            Map<String, Object> subjectMap = (Map<String, Object>) payload.get("subject");
-            Map<String, Object> gradeMap = (Map<String, Object>) payload.get("grade");
+            Map<String, Object> studentMap = request.getStudent();
+            Map<String, Object> subjectMap = request.getSubject();
+            Map<String, Object> gradeMap = request.getGrade();
 
             StudentLookup student = new StudentLookup();
             student.setStudentId(((Number) studentMap.get("studentId")).longValue());

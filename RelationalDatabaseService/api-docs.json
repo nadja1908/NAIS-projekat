@@ -1,0 +1,10 @@
+﻿
+
+openapi    : 3.0.1
+info       : @{title=OpenAPI definition; version=v0}
+servers    : {@{url=http://localhost:9030; description=Generated server url}}
+paths      : @{/users/{id}=; /users=; /api/v1/transactional/grade=}
+components : @{schemas=}
+
+
+
