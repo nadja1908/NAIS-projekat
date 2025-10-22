@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  eureka-server:
+    build:
+      context: ./EurekaService
+      dockerfile: Dockerfile
+    image: eureka-server:latest
+    ports:
+      - "8761:8761"
+
+  columnar-key-value-service:
+    build:
+      context: ./ColumnarDatabaseService
+      dockerfile: Dockerfile
+    image: columnar-key-value-service:latest
+    depends_on:
+      - cassandradb
+      - redisdb
+      - eureka-server
+    restart: always
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING_DATA_CASSANDRA_CONTACT_POINTS: cassandradb
+      SPRING_DATA_CASSANDRA_PORT: 9042
+      REDIS_HOST: redisdb
+      REDIS_PORT: 6379
+    ports:
+      - "9050:9050"
+  relational-service:
+    build:
+      context: ./RelationalDatabaseService
+      dockerfile: Dockerfile
+    image: relational-database-service:latest
+    depends_on:
+      - postgresdb
+      - eureka-server
+    restart: always
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresdb:5432/nais
+      SPRING_DATASOURCE_USERNAME: nais
+      SPRING_DATASOURCE_PASSWORD: nais
+      # Direct container address for Columnar (use the compose service name)
+      COLUMNAR_SERVICE_URL: http://columnar-key-value-service:9050
+      # Also set the Spring property name (redundant but harmless)
+      columnar.service.url: "http://columnar-key-value-service:9050"
+    ports:
+      - "9030:9030"
+
+  cassandradb:
+    image: cassandra:latest
+    ports:
+      - "9042:9042"
+    volumes:
+      - data:/var/lib/cassandra
+      - ./scripts/cassandra-init.cql:/cassandra-init.cql
+
+  redisdb:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - data:/var/lib/redis
+
+  postgresdb:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: "nais"
+      POSTGRES_PASSWORD: "nais"
+      POSTGRES_DB: "nais"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  data:
+  postgres_data:

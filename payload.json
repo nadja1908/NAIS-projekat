@@ -1,0 +1,23 @@
+{
+  "student": {
+    "studentId": 1111,
+    "firstName": "Test",
+    "lastName": "Student",
+    "indexNumber": "2025/001"
+  },
+  "subject": {
+    "subjectId": "CS101",
+    "name": "Intro to CS",
+    "department": "FTN"
+  },
+  "grade": {
+    "studentId": 1111,
+    "subjectId": "CS101",
+    "academicYear": "2024/2025",
+    "examDate": "2025-06-10",
+    "grade": 9,
+    "examType": "FINAL",
+    "professorId": 123,
+    "department": "FTN"
+  }
+}
