@@ -6,9 +6,11 @@ import rs.ac.uns.acs.nais.ColumnarDatabaseService.entity.StudentGrade;
 import rs.ac.uns.acs.nais.ColumnarDatabaseService.repository.StudentGradeRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class StudentGradeService {
@@ -28,6 +30,47 @@ public class StudentGradeService {
     
     public List<StudentGrade> getGradesByStudent(Long studentId) {
         return studentGradeRepository.findByStudentId(studentId);
+    }
+
+    // Get single grade by composite key (studentId, academicYear, subjectId, examDate)
+    public Optional<StudentGrade> getGradeByKey(Long studentId, String academicYear, String subjectId, LocalDateTime examDate) {
+        return studentGradeRepository.findByStudentIdAndAcademicYear(studentId, academicYear)
+                .stream()
+                .filter(g -> subjectId.equals(g.getSubjectId()) && examDate.equals(g.getExamDate()))
+                .findFirst();
+    }
+
+    // Delete grade by composite key
+    public boolean deleteGradeByKey(Long studentId, String academicYear, String subjectId, LocalDateTime examDate) {
+        Optional<StudentGrade> gradeOpt = getGradeByKey(studentId, academicYear, subjectId, examDate);
+        if (gradeOpt.isPresent()) {
+            studentGradeRepository.delete(gradeOpt.get());
+            return true;
+        }
+        return false;
+    }
+
+    // Update grade by composite key
+    public Optional<StudentGrade> updateGradeByKey(Long studentId, String academicYear, String subjectId, LocalDateTime examDate, StudentGrade updated) {
+        Optional<StudentGrade> existing = getGradeByKey(studentId, academicYear, subjectId, examDate);
+        if (existing.isPresent()) {
+            StudentGrade g = existing.get();
+            // copy updatable fields
+            g.setGrade(updated.getGrade());
+            g.setExamType(updated.getExamType());
+            g.setPassed(updated.getPassed());
+            g.setAttemptNumber(updated.getAttemptNumber());
+            g.setProfessorId(updated.getProfessorId());
+            g.setProfessorName(updated.getProfessorName());
+            g.setSubjectName(updated.getSubjectName());
+            g.setDepartment(updated.getDepartment());
+            g.setEctsPoints(updated.getEctsPoints());
+            g.setSemester(updated.getSemester());
+            g.setYearOfStudy(updated.getYearOfStudy());
+            StudentGrade saved = studentGradeRepository.save(g);
+            return Optional.of(saved);
+        }
+        return Optional.empty();
     }
 
     // === ANALITIČKI SERVISI ===

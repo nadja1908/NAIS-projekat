@@ -9,8 +9,10 @@ import rs.ac.uns.acs.nais.ColumnarDatabaseService.entity.StudentGrade;
 import rs.ac.uns.acs.nais.ColumnarDatabaseService.service.StudentGradeService;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -46,6 +48,49 @@ public class StudentGradeController {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(gradeDTOs);
+    }
+
+    // Read by composite key
+    @GetMapping("/{studentId}/{academicYear}/{subjectId}/{examDate}")
+    public ResponseEntity<StudentGradeDTO> getGradeByKey(
+        @PathVariable Long studentId,
+        @PathVariable String academicYear,
+        @PathVariable String subjectId,
+        @PathVariable String examDate // expected format: yyyy-MM-dd
+    ) {
+    LocalDateTime dt = LocalDate.parse(examDate).atStartOfDay();
+    return studentGradeService.getGradeByKey(studentId, academicYear, subjectId, dt)
+        .map(g -> ResponseEntity.ok(convertToDTO(g)))
+        .orElse(ResponseEntity.notFound().build());
+    }
+
+    // UPDATE by composite key
+    @PutMapping("/{studentId}/{academicYear}/{subjectId}/{examDate}")
+    public ResponseEntity<StudentGradeDTO> updateGradeByKey(
+        @PathVariable Long studentId,
+        @PathVariable String academicYear,
+        @PathVariable String subjectId,
+        @PathVariable String examDate,
+        @RequestBody StudentGradeDTO dto
+    ) {
+    LocalDateTime dt = LocalDate.parse(examDate).atStartOfDay();
+    StudentGrade updatedEntity = convertToEntity(dto);
+    Optional<StudentGrade> saved = studentGradeService.updateGradeByKey(studentId, academicYear, subjectId, dt, updatedEntity);
+    return saved.map(g -> ResponseEntity.ok(convertToDTO(g))).orElse(ResponseEntity.notFound().build());
+    }
+
+    // DELETE by composite key
+    @DeleteMapping("/{studentId}/{academicYear}/{subjectId}/{examDate}")
+    public ResponseEntity<Void> deleteGradeByKey(
+        @PathVariable Long studentId,
+        @PathVariable String academicYear,
+        @PathVariable String subjectId,
+        @PathVariable String examDate
+    ) {
+    LocalDateTime dt = LocalDate.parse(examDate).atStartOfDay();
+    boolean deleted = studentGradeService.deleteGradeByKey(studentId, academicYear, subjectId, dt);
+    if (deleted) return ResponseEntity.noContent().build();
+    return ResponseEntity.notFound().build();
     }
 
     // === ANALITIČKI ENDPOINTS ===
