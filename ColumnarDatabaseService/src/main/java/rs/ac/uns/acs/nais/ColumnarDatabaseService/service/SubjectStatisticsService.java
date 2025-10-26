@@ -409,4 +409,18 @@ public class SubjectStatisticsService {
         }
         return null;
     }
+
+    /**
+     * Delete a statistics entry identified by subjectId/department/academicYear
+     */
+    public boolean deleteStatistics(String subjectId, String department, String academicYear) {
+        List<SubjectStatistics> existingStats = subjectStatisticsRepository.findBySubjectIdAndDepartmentAndYear(
+            subjectId, department, academicYear);
+        if (existingStats != null && !existingStats.isEmpty()) {
+            // CassandraRepository delete will remove the row
+            subjectStatisticsRepository.delete(existingStats.get(0));
+            return true;
+        }
+        return false;
+    }
 }

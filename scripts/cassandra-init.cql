@@ -170,3 +170,30 @@ VALUES (102, '2024/2025', 150, 1, 130, 20, 86.7, 7.85, 155, 'OOP', 'Objektno ori
 
 INSERT INTO professor_performance (professor_id, academic_year, total_students_taught, total_subjects_taught, total_students_passed, total_students_failed, overall_pass_rate, average_grade_given, total_exams_conducted, hardest_subject_id, hardest_subject_name, hardest_subject_pass_rate, easiest_subject_id, easiest_subject_name, easiest_subject_pass_rate, performance_consistency_score)
 VALUES (103, '2024/2025', 80, 1, 65, 15, 81.3, 7.12, 85, 'WEB', 'Web programiranje', 81.3, 'WEB', 'Web programiranje', 81.3, 0.78);
+
+-- Denormalized table: grades_by_subject_year
+CREATE TABLE IF NOT EXISTS grades_by_subject_year (
+    subject_id text,
+    academic_year text,
+    exam_date timestamp,
+    student_id bigint,
+    grade double,
+    exam_type text,
+    passed boolean,
+    professor_id bigint,
+    department text,
+    PRIMARY KEY ((subject_id), academic_year, exam_date, student_id)
+);
+
+-- Denormalized table: students_by_program_year
+CREATE TABLE IF NOT EXISTS students_by_program_year (
+    study_program text,
+    current_year_of_study int,
+    student_id bigint,
+    first_name text,
+    last_name text,
+    index_number text,
+    enrollment_year int,
+    is_active boolean,
+    PRIMARY KEY ((study_program), current_year_of_study, student_id)
+);

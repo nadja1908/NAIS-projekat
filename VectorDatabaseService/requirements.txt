@@ -1,7 +1,0 @@
-numpy
-sentence-transformers
-pymilvus
-uvicorn
-fastapi
-py-eureka-client
-huggingface_hub

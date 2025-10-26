@@ -13,3 +13,12 @@ INSERT INTO users (first_name, last_name, email, phone_number, date_of_birth, ge
 VALUES ('Marko', 'Jovanovic', 'marko.jovanovic@example.com', '+1122334455', '1992-05-20T00:00:00', 1, 'pass123', 2);
 INSERT INTO users (first_name, last_name, email, phone_number, date_of_birth, gender, password, address_id)
 VALUES ('Jovana', 'Petrovic', 'jovana.petrovic@example.com', '+3344556677', '1988-08-10T00:00:00', 0, 'pass123', 3);
+
+-- Seed lookups used by the transactional flow
+INSERT INTO student_lookup (first_name, index_number, last_name, student_id)
+VALUES ('Test', '2025/001', 'Student', 1111)
+ON CONFLICT (student_id) DO NOTHING;
+
+INSERT INTO subject_lookup (department, name, subject_id)
+VALUES ('FTN', 'Intro to CS', 'CS101')
+ON CONFLICT (subject_id) DO NOTHING;
