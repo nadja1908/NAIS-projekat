@@ -58,8 +58,10 @@ public class StudentGradeController {
         @PathVariable String subjectId,
         @PathVariable String examDate // expected format: yyyy-MM-dd
     ) {
+    // Decode path variable in case it contains encoded characters like '%2F'
+    String academicYearDecoded = java.net.URLDecoder.decode(academicYear, java.nio.charset.StandardCharsets.UTF_8);
     LocalDateTime dt = LocalDate.parse(examDate).atStartOfDay();
-    return studentGradeService.getGradeByKey(studentId, academicYear, subjectId, dt)
+    return studentGradeService.getGradeByKey(studentId, academicYearDecoded, subjectId, dt)
         .map(g -> ResponseEntity.ok(convertToDTO(g)))
         .orElse(ResponseEntity.notFound().build());
     }
@@ -73,9 +75,10 @@ public class StudentGradeController {
         @PathVariable String examDate,
         @RequestBody StudentGradeDTO dto
     ) {
+    String academicYearDecoded = java.net.URLDecoder.decode(academicYear, java.nio.charset.StandardCharsets.UTF_8);
     LocalDateTime dt = LocalDate.parse(examDate).atStartOfDay();
     StudentGrade updatedEntity = convertToEntity(dto);
-    Optional<StudentGrade> saved = studentGradeService.updateGradeByKey(studentId, academicYear, subjectId, dt, updatedEntity);
+    Optional<StudentGrade> saved = studentGradeService.updateGradeByKey(studentId, academicYearDecoded, subjectId, dt, updatedEntity);
     return saved.map(g -> ResponseEntity.ok(convertToDTO(g))).orElse(ResponseEntity.notFound().build());
     }
 
@@ -87,8 +90,9 @@ public class StudentGradeController {
         @PathVariable String subjectId,
         @PathVariable String examDate
     ) {
+    String academicYearDecoded = java.net.URLDecoder.decode(academicYear, java.nio.charset.StandardCharsets.UTF_8);
     LocalDateTime dt = LocalDate.parse(examDate).atStartOfDay();
-    boolean deleted = studentGradeService.deleteGradeByKey(studentId, academicYear, subjectId, dt);
+    boolean deleted = studentGradeService.deleteGradeByKey(studentId, academicYearDecoded, subjectId, dt);
     if (deleted) return ResponseEntity.noContent().build();
     return ResponseEntity.notFound().build();
     }
