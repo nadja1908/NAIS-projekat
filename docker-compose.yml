@@ -134,32 +134,32 @@ services:
   #     SPRING_ELASTICSEARCH_URIS: http://elasticsearch:9200
   #     EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
       
-#  timeseries-service:
-#    build:
-#      context: ./TimeseriesDatabaseService
-#      dockerfile: Dockerfile
-#    image: timeseries-example:latest
-#    restart: on-failure
-#    depends_on:
-#      - eureka-server
-#      - influxdb
-#    environment:
-#      SPRING_INFLUX_URL: http://influxdb:8086
-#      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+  microservice-analytics-java:
+    build:
+      context: ./microservice-analytics-java
+      dockerfile: Dockerfile
+    image: timeseries-example:latest
+    restart: on-failure
+    depends_on:
+      - eureka-server
+      - influxdb
+    environment:
+      SPRING_INFLUX_URL: http://influxdb:8086
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
 
-#  influxdb:
-#    image: influxdb:2.7.6
-#    ports:
-#      - '8086:8086'
-#    volumes:
-#      - influxdb-storage:/var/lib/influxdb
-#    environment:
-#      - DOCKER_INFLUXDB_INIT_MODE=setup
-#      - DOCKER_INFLUXDB_INIT_USERNAME=nais
-#      - DOCKER_INFLUXDB_INIT_PASSWORD=password
-#      - DOCKER_INFLUXDB_INIT_ORG=nais_org
-#      - DOCKER_INFLUXDB_INIT_BUCKET=nais_bucket
-#      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token
+  influxdb:
+    image: influxdb:2.7.6
+    ports:
+      - '8086:8086'
+    volumes:
+      - influxdb-storage:/var/lib/influxdb
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=nais
+      - DOCKER_INFLUXDB_INIT_PASSWORD=password
+      - DOCKER_INFLUXDB_INIT_ORG=nais_org
+      - DOCKER_INFLUXDB_INIT_BUCKET=nais_bucket
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token
 
   #neo4j:
    # image: neo4j
