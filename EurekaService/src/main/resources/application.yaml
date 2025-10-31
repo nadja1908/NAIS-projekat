@@ -3,11 +3,16 @@ server:
 
 spring:
   application:
-    name: eureka-server
+    name: eureka-servera
 
 eureka:
   instance:
-    hostname: ${DOCKER_HOST:localhost}  
+    hostname: ${DOCKER_HOST:localhost}
   client:
     fetch-registry: false
     register-with-eureka: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

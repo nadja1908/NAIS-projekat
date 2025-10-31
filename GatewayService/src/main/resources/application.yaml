@@ -40,10 +40,10 @@ spring:
           uri: http://elasticsearch-database-service
           predicates:
             - Path=/elasticsearch-database-service/**
-        - id: timeseries-database-service
-          uri: http://timeseries-database-service
+        - id: microservice-analytics-java
+          uri: http://microservice-analytics-java
           predicates:
-            - Path=/timeseries-database-service/**
+            - Path=/microservice-analytics-java/**
         - id: vector-database-service
           uri: http://vector-database-service
           predicates:
